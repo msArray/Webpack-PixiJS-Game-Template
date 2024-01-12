@@ -2,7 +2,8 @@
 import { Application } from 'pixi.js';
 import { _Note } from "./components/_notes";
 import { _Button } from "./components/_button";
-import { _MouseEffect } from "./components/_mouseEffect";
+import { _MouseEffect, _ClickEffect } from "./components/_mouseEffect";
+import { _Scene } from "./components/_createScene";
 import { tweURL } from './utils/utils';
 
 // 基本設定
@@ -15,18 +16,26 @@ class Game {
     public mouse: {
         x: number,
         y: number,
-        onClick?: () => void,
         isClick: boolean,
-    };
+        onClick?: (callback: () => void) => void,
+    } = {
+            x: 0,
+            y: 0,
+            isClick: false,
+        };
 
     // スプライト
     private Ball: _Note;
     private button: _Button;
     private mouseEffect: _MouseEffect;
+    private clickEffect: _ClickEffect[] = [];
+
+    // シーン
+    private testscene: _Scene;
 
     constructor() {
         this.__init();
-        this._loadSprites();
+        this._load();
         this.app.ticker.add((delta: number) => {
             this._main(delta);
         })
@@ -41,11 +50,11 @@ class Game {
             backgroundColor: 0xffffff
         })
         document.body.appendChild((this.app.view as HTMLCanvasElement));
+        this._mouse();
         this._resizer();
         window.addEventListener("resize", () => {
             this._resizer();
         });
-        this._mouse();
     }
 
     private _resizer() {
@@ -57,12 +66,6 @@ class Game {
     }
 
     public _mouse() {
-        this.mouse = {
-            x: 0,
-            y: 0,
-            isClick: false,
-        }
-
         window.addEventListener("mousemove", (event: MouseEvent) => {
             /* Y座標 */
             this.mouse.y = event.clientY - ((window.innerHeight - (this.app.view.height * (this.app.view as any).style.scale)) / 2); // キャンバスの上からのマウスのY座標を取得
@@ -76,6 +79,19 @@ class Game {
             this.mouse.x = (this.mouse.x > this.app.view.width ? this.app.view.width : this.mouse.x); // 上限値をキャンバスの横幅に
         })
 
+        window.addEventListener("touchmove", (event: TouchEvent) => {
+            /* Y座標 */
+            this.mouse.y = event.touches[0].pageY - ((window.innerHeight - (this.app.view.height * (this.app.view as any).style.scale)) / 2); // キャンバスの上からのマウスのY座標を取得
+            this.mouse.y = this.mouse.y / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
+            this.mouse.y = (this.mouse.y < 0 ? 0 : this.mouse.y); // 下限値 0
+            this.mouse.y = (this.mouse.y > this.app.view.height ? this.app.view.height : this.mouse.y); // 上限値をキャンバスの高さに
+            /* X座標 */
+            this.mouse.x = event.touches[0].pageX - ((window.innerWidth - (this.app.view.width * (this.app.view as any).style.scale)) / 2); // キャンバスの左からのマウスのX座標を取得
+            this.mouse.x = this.mouse.x / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
+            this.mouse.x = (this.mouse.x < 0 ? 0 : this.mouse.x); // 下限値 0
+            this.mouse.x = (this.mouse.x > this.app.view.width ? this.app.view.width : this.mouse.x); // 上限値をキャンバスの横幅に
+        })
+
         window.addEventListener("mousedown", () => {
             this.mouse.isClick = true;
         })
@@ -84,25 +100,55 @@ class Game {
             this.mouse.isClick = false;
         })
 
-        window.addEventListener("click", () => {
-            this.mouse.onClick();
+        window.addEventListener("touchstart", () => {
+            this.mouse.isClick = true;
         })
+
+        window.addEventListener("touchend", () => {
+            this.mouse.isClick = false;
+        })
+
+        this.mouse.onClick = (callback) => {
+            window.addEventListener("click", callback);
+        }
     }
 
-    private _loadSprites() {
-        this.button = new _Button(this.app, tweURL("1f7e9"));
+    private _load() {
+        this.testscene = new _Scene(this.app);
+        this.button = new _Button(this.testscene.container, tweURL("1f7e9"));
         this.button
             .setPosition(_quality * AspectRadio.horizontal / 2, _quality * AspectRadio.vertical / 2)
             .setOnClick(() => console.log("clicked!"))
             .setOnMouseOver(() => console.log("hovered!"));
-        
-        this.mouseEffect = new _MouseEffect(this.app);
+
+        this.mouseEffect = new _MouseEffect(this.testscene.container);
+        this.mouse.onClick(() => {
+            this.clickEffect.push(new _ClickEffect(this.testscene.container, this.mouse.x, this.mouse.y));
+        })
     }
 
     private _main(delta: number) {
-        this.button.renderer(delta);
-        this.mouseEffect.renderer(delta);
+        if(new URL(window.location.href).searchParams.get("debug") == "test") this._scene_testscene(delta);
     }
+
+    // シーンごとの処理
+
+    private _scene_testscene(delta: number) {
+
+        this.testscene.renderer((delta: number) => {
+            this.button.renderer(delta);
+            this.mouseEffect.renderer(delta);
+            this.clickEffect.forEach((effect, index) => {
+                effect.renderer(delta);
+                if (effect.size > 0.5 * _quality) {
+                    this.clickEffect.splice(index, 1);
+                    effect.Effect.destroy();
+                }
+            })
+        }, delta)
+
+    }
+
 }
 
 const _0x47616d65 = new Game();

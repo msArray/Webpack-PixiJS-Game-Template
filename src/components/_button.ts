@@ -1,12 +1,13 @@
-import { Application, Texture, Sprite } from "pixi.js";
+import { Application, Texture, Sprite, Container } from "pixi.js";
 import { _quality } from "../index";
 
 export class _Button {
-    private app: Application;
-    private textureURL: string;
-    private texture: Texture;
-    private sprite: Sprite;
-    private size: number;
+    private app: Application | Container;
+    private isScene: boolean = false;
+    public textureURL: string;
+    public texture: Texture;
+    public sprite: Sprite;
+    public size: number;
 
 
     /* State */
@@ -18,7 +19,7 @@ export class _Button {
     private onClick?: () => void;
     private onHover?: () => void;
 
-    constructor(app: Application, textureURL: string) {
+    constructor(app: Application | Container, textureURL: string) {
         this.app = app;
         this.textureURL = textureURL;
         this.texture = Texture.from(this.textureURL); // テクスチャ読み込み
@@ -27,28 +28,44 @@ export class _Button {
         this.sprite.interactive = true; // interactiveを有効に
         this.size = 1; // サイズ(倍率)
         this.sprite.scale.set(this.size * _quality / 100, this.size * _quality / 100);
-        this.app.stage.addChild(this.sprite);
+        this.sprite.alpha = 0;
+        if (this.app instanceof Application) {
+            this.app.stage.addChild(this.sprite);
+        } else {
+            this.app.addChild(this.sprite);
+        }
 
+        this.Actions();
+    }
+
+    public renderer(delta: number) {
+        this.sprite.alpha = 1;
+        this.isScene = true;
+    }
+
+    private Actions() {
         this.sprite.on("pointerdown", () => {
+            if(!this.isScene) return;
             this.isClick = true;
             this.onClick();
         });
 
+
         this.sprite.on("pointerup", () => {
+            if(!this.isScene) return;
             this.isClick = false;
         });
 
         this.sprite.on("mouseover", () => {
+            if(!this.isScene) return;
             this.isHover = true;
             this.onHover();
         });
 
         this.sprite.on("mouseout", () => {
+            if(!this.isScene) return;
             this.isHover = false;
         });
-    }
-
-    public renderer(delta: number) {
     }
 
     public setPosition(x: number, y: number) {
