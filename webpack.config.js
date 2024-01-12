@@ -42,14 +42,7 @@ const config = {
 
         new MiniCssExtractPlugin(),
 
-        new webpackObfuscator({
-            stringArrayCallsTransform: true,
-            stringArrayEncoding: [
-                'base64',
-                'rc4'
-            ],
-            stringArrayThreshold: 1,
-        }, [])
+        new webpackObfuscator({rotateUnicodeArray: true}, [])
 
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/

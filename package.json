@@ -2,11 +2,6 @@
   "name": "my-webpack-project",
   "version": "1.0.0",
   "description": "My webpack project",
-  "engines": {
-    "node": ">=20.10.0",
-    "npm": ">=10.2.3",
-    "yarn": ">=1.22.19"
-  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,7 +11,7 @@
     "watch": "webpack --watch",
     "serve:dev": "webpack serve",
     "serve": "serve public",
-    "push": "git add -A && git commit -m \"public dir\" && git push"
+    "push": "git add -A && git commit -m \"fix config\" && git push"
   },
   "keywords": [],
   "author": "",
