@@ -1,8 +1,8 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
-
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const webpackObfuscator = require('webpack-obfuscator');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -12,9 +12,25 @@ const stylesHandler = MiniCssExtractPlugin.loader;
 
 
 const config = {
-    entry: './src/index.ts',
+    entry: {
+        index: {
+            import: './src/index.ts',
+            dependOn: 'shared',
+        },
+        another: {
+            import: './src/another-module.ts',
+            dependOn: 'shared',
+        },
+        shared: 'lodash',
+    },
     output: {
+        filename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, isProduction ? 'public' : 'dist'),
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
     },
     devServer: {
         open: true,
@@ -22,9 +38,18 @@ const config = {
     plugins: [
         new HtmlWebpackPlugin({
             template: 'index.html',
-        }), 
+        }),
 
         new MiniCssExtractPlugin(),
+
+        new webpackObfuscator({
+            stringArrayCallsTransform: true,
+            stringArrayEncoding: [
+                'base64',
+                'rc4'
+            ],
+            stringArrayThreshold: 1,
+        }, [])
 
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
