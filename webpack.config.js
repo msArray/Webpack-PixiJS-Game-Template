@@ -15,13 +15,7 @@ const config = {
     entry: {
         index: {
             import: './src/index.ts',
-            dependOn: 'shared',
         },
-        another: {
-            import: './src/another-module.ts',
-            dependOn: 'shared',
-        },
-        shared: 'lodash',
     },
     output: {
         filename: '[name].[chunkhash].js',
@@ -29,8 +23,18 @@ const config = {
     },
     optimization: {
         splitChunks: {
-            chunks: 'all',
-        },
+            // cacheGroups内にバンドルの設定を複数記述できる
+            cacheGroups: {
+                // 今回はvendorだが、任意の名前で問題ない
+                vendor: {
+                    // node_modules配下のモジュールをバンドル対象とする
+                    test: /node_modules/,
+                    name: 'vendor',
+                    chunks: 'initial',
+                    enforce: true
+                }
+            }
+        }
     },
     devServer: {
         open: true,
@@ -42,7 +46,7 @@ const config = {
 
         new MiniCssExtractPlugin(),
 
-        new webpackObfuscator({rotateUnicodeArray: true}, [])
+        isProduction ? new webpackObfuscator({rotateUnicodeArray: true}, []) : null,
 
         // Add your plugins here
         // Learn more about plugins from https://webpack.js.org/configuration/plugins/
@@ -61,7 +65,7 @@ const config = {
             {
                 test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
                 type: 'asset',
-            },
+            }
 
             // Add your rules for custom modules here
             // Learn more about loaders from https://webpack.js.org/loaders/

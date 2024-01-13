@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta charset="utf-8" />
     <title>Fusion Notes</title>
 </head>
@@ -23,7 +23,15 @@
         box-sizing: border-box;
     }
 
+    html,
     body {
+        overflow: hidden;
+    }
+
+    body {
+        position: absolute;
+        left: 0;
+        top: 0;
         display: flex;
         height: 100vh;
         width: 100vw;
@@ -32,10 +40,11 @@
         background: #000;
     }
 
-    canvas{
+    canvas {
         user-select: none;
+        -webkit-user-select: none;
     }
-    
+
     #ui {
         position: absolute;
         left: 0;
