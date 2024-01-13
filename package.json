@@ -10,8 +10,9 @@
     "build:prod": "rimraf public && webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
     "serve:dev": "webpack serve",
+    "serve:dist": "serve dist",
     "serve": "serve public",
-    "push": "git add -A && git commit -m \"fix config\" && git push"
+    "push": "yarn build && git add -A && git commit -m \"fix config\" && git push"
   },
   "keywords": [],
   "author": "",
