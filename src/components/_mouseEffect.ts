@@ -13,7 +13,7 @@ export class _ClickEffect {
   private x: number = 0;
   private y: number = 0;
   public size: number = 0;
-  public sizeAmplify: number = 0.225;
+  public sizeAmplify: number = 2 / 10;
   public Effect: Graphics;
   public EffectSprite: Sprite;
 
@@ -39,21 +39,21 @@ export class _ClickEffect {
   public renderer(delta: number) {
     this.EffectSprite.alpha = 1;
     this.size += this.sizeAmplify * delta;
-    if (this.sizeAmplify >= 0.01) this.sizeAmplify /= 1.2;
+    if (this.sizeAmplify >= 1 / 100) this.sizeAmplify /= 105 / 100;
     this.EffectSprite.scale.set(this.size);
     //this.draw();
   }
-/*
-  private draw() {
-    this.Effect.clear();
-    this.Effect.beginFill(0x03bafc, 0.05);
-    for (let i = 0; i < 10; i++) {
-      this.Effect.lineStyle(0.1 * _quality, 0x000000, 0.2 - i / 2);
-      this.Effect.drawCircle(this.x, this.y, this.size - i);
+  /*
+    private draw() {
+      this.Effect.clear();
+      this.Effect.beginFill(0x03bafc, 0.05);
+      for (let i = 0; i < 10; i++) {
+        this.Effect.lineStyle(0.1 * _quality, 0x000000, 0.2 - i / 2);
+        this.Effect.drawCircle(this.x, this.y, this.size - i);
+      }
+      this.Effect.endFill();
     }
-    this.Effect.endFill();
-  }
-*/
+  */
   private gradient() {
     const c = document.createElement("canvas");
     c.height = _quality;

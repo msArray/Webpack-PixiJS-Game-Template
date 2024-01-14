@@ -18,7 +18,7 @@ const config = {
         },
     },
     output: {
-        filename: '[name].[chunkhash].js',
+        filename: isProduction ? '[name].[chunkhash].js' : '[name].js',
         path: path.resolve(__dirname, isProduction ? 'public' : 'dist'),
     },
     optimization: {
@@ -39,18 +39,33 @@ const config = {
     devServer: {
         open: true,
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: 'index.html',
-        }),
+    plugins:
+        isProduction ?
+            [
+                new HtmlWebpackPlugin({
+                    template: 'index.html',
+                }),
 
-        new MiniCssExtractPlugin(),
+                new MiniCssExtractPlugin(),
 
-        isProduction ? new webpackObfuscator({rotateUnicodeArray: true}, []) : null,
+                // 難読化ツール　入れると小数点以下の計算がバグるので使わない方が良い
+                /*new webpackObfuscator({
+                    stringArrayCallsTransform: true,
+                    stringArrayEncoding: [
+                        'base64'
+                    ],
+                    stringArrayThreshold: 1,
+                }, [])*/
 
-        // Add your plugins here
-        // Learn more about plugins from https://webpack.js.org/configuration/plugins/
-    ],
+                // Add your plugins here
+                // Learn more about plugins from https://webpack.js.org/configuration/plugins/
+            ] : [
+                new HtmlWebpackPlugin({
+                    template: 'index.html',
+                }),
+
+                new MiniCssExtractPlugin(),
+            ],
     module: {
         rules: [
             {

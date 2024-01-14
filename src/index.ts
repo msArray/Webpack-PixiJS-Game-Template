@@ -19,38 +19,38 @@ class Game {
     isClick: boolean;
     onClick?: (callback: (event?: MouseEvent | TouchEvent) => void) => void;
   } = {
-    x: 0,
-    y: 0,
-    isClick: false,
-  };
+      x: 0,
+      y: 0,
+      isClick: false,
+    };
 
   private calc: {
     x: (actPoint: number) => number;
     y: (actPoint: number) => number;
   } = {
-    x: (actPoint: number) => {
-      var _x: number =
-        actPoint -
-        (window.innerWidth -
-          this.app.view.width * (this.app.view as any).style.scale) /
+      x: (actPoint: number) => {
+        var _x: number =
+          actPoint -
+          (window.innerWidth -
+            this.app.view.width * (this.app.view as any).style.scale) /
           2; // キャンバスの左からのマウスのX座標を取得
-      _x = _x / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
-      _x = _x < 0 ? 0 : _x; // 下限値 0
-      _x = _x > this.app.view.width ? this.app.view.width : _x; // 上限値をキャンバスの横幅に
-      return _x;
-    },
-    y: (actPoint: number) => {
-      var _y: number =
-        actPoint -
-        (window.innerHeight -
-          this.app.view.height * (this.app.view as any).style.scale) /
+        _x = _x / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
+        _x = _x < 0 ? 0 : _x; // 下限値 0
+        _x = _x > this.app.view.width ? this.app.view.width : _x; // 上限値をキャンバスの横幅に
+        return _x;
+      },
+      y: (actPoint: number) => {
+        var _y: number =
+          actPoint -
+          (window.innerHeight -
+            this.app.view.height * (this.app.view as any).style.scale) /
           2; // キャンバスの上からのマウスのY座標を取得
-      _y = _y / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
-      _y = _y < 0 ? 0 : _y; // 下限値 0
-      _y = _y > this.app.view.height ? this.app.view.height : _y;
-      return _y;
-    },
-  };
+        _y = _y / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
+        _y = _y < 0 ? 0 : _y; // 下限値 0
+        _y = _y > this.app.view.height ? this.app.view.height : _y;
+        return _y;
+      },
+    };
 
   // スプライト
   private Ball: _Note;
@@ -83,6 +83,7 @@ class Game {
     window.addEventListener("resize", () => {
       this._resizer();
     });
+    document.oncontextmenu = function () { return false; }
   }
 
   private _resizer() {
@@ -90,13 +91,11 @@ class Game {
       window.innerHeight / AspectRadio.vertical >
       window.innerWidth / AspectRadio.horizontal
     ) {
-      (this.app.view as HTMLCanvasElement).style.scale = `${
-        window.innerWidth / (_quality * AspectRadio.horizontal)
-      }`;
+      (this.app.view as HTMLCanvasElement).style.scale = `${window.innerWidth / (_quality * AspectRadio.horizontal)
+        }`;
     } else {
-      (this.app.view as HTMLCanvasElement).style.scale = `${
-        window.innerHeight / (_quality * AspectRadio.vertical)
-      }`;
+      (this.app.view as HTMLCanvasElement).style.scale = `${window.innerHeight / (_quality * AspectRadio.vertical)
+        }`;
     }
   }
 
