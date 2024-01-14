@@ -19,7 +19,7 @@ const config = {
     },
     output: {
         filename: isProduction ? '[name].[chunkhash].js' : '[name].js',
-        path: path.resolve(__dirname, isProduction ? 'public' : 'dist'),
+        path: path.resolve(__dirname, isProduction ? 'docs' : 'dist'),
     },
     optimization: {
         splitChunks: {

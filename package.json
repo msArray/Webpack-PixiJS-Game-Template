@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf public && webpack --mode=production --node-env=production",
-    "build:dev": "rimraf public && webpack --mode=development",
-    "build:prod": "rimraf public && webpack --mode=production --node-env=production",
+    "build": "rimraf docs && webpack --mode=production --node-env=production",
+    "build:dev": "rimraf docs && webpack --mode=development",
+    "build:prod": "rimraf docs && webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
     "serve:dev": "webpack serve",
     "serve:dist": "serve dist",
-    "serve": "serve public",
+    "serve": "serve docs",
     "push": "yarn build && git add -A && git commit -m \"fix config\" && git push"
   },
   "keywords": [],
