@@ -1,15 +1,41 @@
-# 🚀 Welcome to your new awesome project!
+# Webpack Pixi Game Template
 
-This project has been created using **webpack-cli**, you can now run
+The Template of Web Game App using Webpack & Pixijs.
+
+## Roadmap
+- [ ] PWA Support  
+- [ ] Use Web Worker for smooth operation  
+- [ ] Easily Build Mobile Game using Cordova  
+
+## Install
 
 ```
-npm run build
+yarn install
 ```
 
-or
+or you can run ```npm install```
+
+## Build
 
 ```
 yarn build
 ```
 
-to bundle your application
+or you can ```npm run build``` to bundle your application
+
+## Deployment
+
+### Recommend
+
+You can run as same using npm.when you use npm,you need replace ```yarn``` to ```npm run```.
+
+```
+yarn serve:dev
+```
+
+### Unrecommend
+
+```
+yarn watch
+yarn serve:dist
+```

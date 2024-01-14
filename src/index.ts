@@ -101,65 +101,13 @@ class Game {
 
   public _mouse() {
     window.addEventListener("mousemove", (event: MouseEvent) => {
-      /* Y座標 */
-      /*
-      this.mouse.y =
-        event.clientY -
-        (window.innerHeight -
-          this.app.view.height * (this.app.view as any).style.scale) /
-          2; // キャンバスの上からのマウスのY座標を取得
-      this.mouse.y = this.mouse.y / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
-      this.mouse.y = this.mouse.y < 0 ? 0 : this.mouse.y; // 下限値 0
-      this.mouse.y =
-        this.mouse.y > this.app.view.height
-          ? this.app.view.height
-          : this.mouse.y; // 上限値をキャンバスの高さに
-          */
       this.mouse.y = this.calc.y(event.clientY);
       this.mouse.x = this.calc.x(event.clientX);
-      /* X座標 */
-      /*
-      this.mouse.x =
-        event.clientX -
-        (window.innerWidth -
-          this.app.view.width * (this.app.view as any).style.scale) /
-          2; // キャンバスの左からのマウスのX座標を取得
-      this.mouse.x = this.mouse.x / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
-      this.mouse.x = this.mouse.x < 0 ? 0 : this.mouse.x; // 下限値 0
-      this.mouse.x =
-        this.mouse.x > this.app.view.width ? this.app.view.width : this.mouse.x; // 上限値をキャンバスの横幅に
-        */
     });
 
     window.addEventListener("touchmove", (event: TouchEvent) => {
-      /* Y座標 */
-      /*
-      this.mouse.y =
-        event.touches[0].pageY -
-        (window.innerHeight -
-          this.app.view.height * (this.app.view as any).style.scale) /
-          2; // キャンバスの上からのマウスのY座標を取得
-      this.mouse.y = this.mouse.y / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
-      this.mouse.y = this.mouse.y < 0 ? 0 : this.mouse.y; // 下限値 0
-      this.mouse.y =
-        this.mouse.y > this.app.view.height
-          ? this.app.view.height
-          : this.mouse.y; // 上限値をキャンバスの高さに
-        */
       this.mouse.y = this.calc.y(event.touches[0].pageY);
       this.mouse.x = this.calc.x(event.touches[0].pageX);
-      /* X座標 */
-      /*
-      this.mouse.x =
-        event.touches[0].pageX -
-        (window.innerWidth -
-          this.app.view.width * (this.app.view as any).style.scale) /
-          2; // キャンバスの左からのマウスのX座標を取得
-      this.mouse.x = this.mouse.x / (this.app.view as any).style.scale; // キャンバスの拡大率を使い、キャンバスの座標に変換
-      this.mouse.x = this.mouse.x < 0 ? 0 : this.mouse.x; // 下限値 0
-      this.mouse.x =
-        this.mouse.x > this.app.view.width ? this.app.view.width : this.mouse.x; // 上限値をキャンバスの横幅に
-        */
     });
 
     window.addEventListener("mousedown", () => {
@@ -184,11 +132,9 @@ class Game {
     };
   }
 
-  private calcPoint() {
-    this.calc;
-  }
-
   private _load() {
+    /* Load Start */
+
     this.testscene = new _Scene(this.app);
     this.button = new _Button(this.testscene.container, tweURL("1f7e9"));
     this.button
@@ -221,6 +167,8 @@ class Game {
         );
       }
     });
+
+    /* Load End */
   }
 
   private _main(delta: number) {

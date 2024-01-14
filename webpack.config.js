@@ -43,7 +43,7 @@ const config = {
         isProduction ?
             [
                 new HtmlWebpackPlugin({
-                    template: 'index.html',
+                    template: path.resolve(__dirname, 'src/html', 'web.html'),
                 }),
 
                 new MiniCssExtractPlugin(),
