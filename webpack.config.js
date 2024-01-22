@@ -3,6 +3,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpackObfuscator = require('webpack-obfuscator');
+const workBoxWebpackPlugin = require("workbox-webpack-plugin");
+const WebpackPwaManifest = require("webpack-pwa-manifest");
 
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -13,9 +15,7 @@ const stylesHandler = MiniCssExtractPlugin.loader;
 
 const config = {
     entry: {
-        index: {
-            import: './src/index.ts',
-        },
+        index: './src/index.ts',
     },
     output: {
         filename: isProduction ? '[name].[chunkhash].js' : '[name].js',
@@ -48,6 +48,24 @@ const config = {
 
                 new MiniCssExtractPlugin(),
 
+                new WebpackPwaManifest({
+                    short_name: "My Game",
+                    name: "My Game",
+                    display: "standalone",
+                    start_url: "index.html",
+                    background_color: "#000000",
+                    theme_color: "#FFFFFF",
+                    /*
+                    icons: [{
+                        src: path.resolve(__dirname, "src/images/icon_512.png"),
+                        sizes: [96, 128, 192, 256, 384, 512],
+                    }]*/
+                }),
+
+                new workBoxWebpackPlugin.GenerateSW({
+                    swDest: path.resolve(__dirname, "docs") + "/service-worker.js"
+                })
+
                 // 難読化ツール　入れると小数点以下の計算がバグるので使わない方が良い
                 /*new webpackObfuscator({
                     stringArrayCallsTransform: true,
@@ -61,7 +79,7 @@ const config = {
                 // Learn more about plugins from https://webpack.js.org/configuration/plugins/
             ] : [
                 new HtmlWebpackPlugin({
-                    template: 'index.html',
+                    template: path.resolve(__dirname, 'src/html', 'web.html'),
                 }),
 
                 new MiniCssExtractPlugin(),

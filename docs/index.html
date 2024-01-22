@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/><meta charset="utf-8"/><title>My Game</title><script defer="defer" src="vendor.7c7d8e91a3bbe73aa566.js"></script><script defer="defer" src="index.e0cd864b82f25f2985c1.js"></script></head><body></body><style>::-webkit-scrollbar {
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/><meta charset="utf-8"/><title>My Game</title><script defer="defer" src="vendor.4b74c28420719d9b69e1.js"></script><script defer="defer" src="index.7266199fc07e06a0d05c.js"></script><meta name="theme-color" content="#FFFFFF" /><link rel="manifest" href="auto/manifest.c02eb8981b20d588e26e1128928bcb3c.json" /></head><body></body><style>::-webkit-scrollbar {
         width: 0;
     }
 
@@ -34,4 +34,12 @@
         top: 0;
         bottom: 0;
         margin: auto;
-    }</style></html>
+    }</style><script>if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                console.log('SW registered: ', registration);
+            }).catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
+            });
+        });
+    }</script></html>

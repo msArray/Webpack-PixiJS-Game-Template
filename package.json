@@ -20,7 +20,8 @@
   "dependencies": {
     "@types/lodash": "^4.14.202",
     "pixi.js": "^7.3.3",
-    "webpack": "^5.89.0"
+    "webpack": "^5.89.0",
+    "workbox-webpack-plugin": "^7.0.0"
   },
   "devDependencies": {
     "@types/pixi.js": "^5.0.0",
@@ -38,6 +39,7 @@
     "typescript": "^5.3.3",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1",
-    "webpack-obfuscator": "^3.5.1"
+    "webpack-obfuscator": "^3.5.1",
+    "webpack-pwa-manifest": "^4.3.0"
   }
 }

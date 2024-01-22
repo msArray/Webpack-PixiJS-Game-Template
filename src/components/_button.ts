@@ -1,10 +1,10 @@
-import { Application, Texture, Sprite, Container } from "pixi.js";
+import { Application, Texture, Sprite, Container, TextureSource } from "pixi.js";
 import { _quality } from "../index";
 
 export class _Button {
     private app: Application | Container;
     private isScene: boolean = false;
-    public textureURL: string;
+    public textureE: TextureSource;
     public texture: Texture;
     public sprite: Sprite;
     public size: number;
@@ -19,10 +19,10 @@ export class _Button {
     private onClick?: () => void;
     private onHover?: () => void;
 
-    constructor(app: Application | Container, textureURL: string) {
+    constructor(app: Application | Container, textureE: TextureSource) {
         this.app = app;
-        this.textureURL = textureURL;
-        this.texture = Texture.from(this.textureURL); // テクスチャ読み込み
+        this.textureE = textureE;
+        this.texture = Texture.from(this.textureE); // テクスチャ読み込み
         this.sprite = new Sprite(this.texture); // sprite作成
         this.sprite.anchor.set(0.5); // 中心点を中心に
         this.sprite.interactive = true; // interactiveを有効に

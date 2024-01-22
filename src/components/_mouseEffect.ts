@@ -6,22 +6,20 @@ import {
   Texture,
   Sprite,
 } from "pixi.js";
-import { _quality, _mouse } from "../index";
+import { _quality, _mouse, _0x47616d65 } from "../index";
 
 export class _ClickEffect {
   private app: Application | Container;
   private x: number = 0;
   private y: number = 0;
   public size: number = 0;
-  public sizeAmplify: number = 2 / 10;
-  public Effect: Graphics;
+  public sizeAmplify: number = 0.08;
   public EffectSprite: Sprite;
 
   constructor(app: Application | Container, x: number, y: number) {
     this.app = app;
     this.x = x;
     this.y = y;
-    this.Effect = new Graphics();
     this.EffectSprite = new Sprite(this.gradient());
     this.EffectSprite.alpha = 0;
     this.EffectSprite.anchor.set(0.5);
@@ -29,31 +27,18 @@ export class _ClickEffect {
     this.EffectSprite.y = this.y;
     if (this.app instanceof Application) {
       this.app.stage.addChild(this.EffectSprite);
-      //this.app.stage.addChild(this.Effect);
     } else {
       this.app.addChild(this.EffectSprite);
-      //this.app.addChild(this.Effect);
     }
   }
 
   public renderer(delta: number) {
     this.EffectSprite.alpha = 1;
     this.size += this.sizeAmplify * delta;
-    if (this.sizeAmplify >= 1 / 100) this.sizeAmplify /= 105 / 100;
+    if (this.sizeAmplify >= 1 / 100) this.sizeAmplify /= 1.05;
     this.EffectSprite.scale.set(this.size);
-    //this.draw();
   }
-  /*
-    private draw() {
-      this.Effect.clear();
-      this.Effect.beginFill(0x03bafc, 0.05);
-      for (let i = 0; i < 10; i++) {
-        this.Effect.lineStyle(0.1 * _quality, 0x000000, 0.2 - i / 2);
-        this.Effect.drawCircle(this.x, this.y, this.size - i);
-      }
-      this.Effect.endFill();
-    }
-  */
+
   private gradient() {
     const c = document.createElement("canvas");
     c.height = _quality;
@@ -70,19 +55,30 @@ export class _ClickEffect {
     ctx.beginPath();
     grd.addColorStop(0, "rgba(3, 186, 252,0.3)");
     grd.addColorStop(0.3, "rgba(3, 186, 252,0.2)");
-    grd.addColorStop(0.5, "rgba(3, 186, 252,0.8)");
+    grd.addColorStop(0.5, "rgba(3, 186, 252,0.4)");
     grd.addColorStop(0.7, "rgba(3, 186, 252,0.2)");
     grd.addColorStop(1, "rgba(3, 186, 252,0.0)");
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, _quality, _quality);
+    /* Effect v2
+    grd.addColorStop(0.2, "rgba(3, 186, 252,0.0)");
+    grd.addColorStop(0.3, "rgba(3, 186, 252,0.1)");
+    grd.addColorStop(0.5, "rgba(3, 186, 252,0.2)");
+    grd.addColorStop(0.7, "rgba(3, 186, 252,0.1)");
+    grd.addColorStop(0.8, "rgba(3, 186, 252,0.0)");
+    ctx.fillStyle = grd;
+    ctx.arc(_quality / 2, _quality / 2, _quality / 2, 0, Math.PI * 2, false);
+    ctx.fill();
+    //ctx.fillRect(0, 0, _quality, _quality);
+    */
     return Texture.from(c);
   }
 }
 
 export class _MouseEffect {
   private app: Application | Container;
-  private bezierPointsMaxLength: number = 50;
-  private bezierPoints: { x: number; y: number }[] = [{ x: 0, y: 0 }];
+  private bezierPointsMaxLength: number = 20;
+  private bezierPoints: { x: number; y: number }[] = [];
   private Bezier: Graphics;
 
   constructor(app: Application | Container) {
@@ -97,18 +93,18 @@ export class _MouseEffect {
   }
 
   public renderer(delta: number) {
-    if (this.bezierPoints.length > 10) this.drawBesier();
     this.bezierPoints.push({ x: _mouse.x, y: _mouse.y });
+    if (this.bezierPoints.length > 10) this.drawBesier();
     if (this.bezierPoints.length > this.bezierPointsMaxLength)
       this.bezierPoints = this.bezierPoints.slice(1);
   }
 
   private drawBesier() {
     this.Bezier.clear();
-    this.Bezier.lineStyle(10, 0x000000, 1);
     this.Bezier.moveTo(this.bezierPoints[0].x, this.bezierPoints[0].y);
     for (let t = 0; t < 1; t += 0.01) {
       const currentPoint = this.calculateBezierPoint(this.bezierPoints, t);
+      this.Bezier.lineStyle(10, 0x03bafc, t * 0.8);
       this.Bezier.lineTo(currentPoint.x, currentPoint.y);
     }
     this.Bezier.endFill();

@@ -1,26 +1,31 @@
 // PixiJSを読み込み
 import { Application } from "pixi.js";
-import { _Note } from "./components/_notes";
 import { _Button } from "./components/_button";
 import { _MouseEffect, _ClickEffect } from "./components/_mouseEffect";
 import { _Scene } from "./components/_createScene";
-import { tweURL } from "./utils/utils";
+
+// Scenes
+import { _TitleScene } from "./scenes/_titleScene";
 
 // 基本設定
-const AspectRadio = { vertical: 9, horizontal: 16 }; // ゲームのアスペクト比 vertical 縦:horizontal 横
+const _AspectRadio = { vertical: 9, horizontal: 16 }; // ゲームのアスペクト比 vertical 縦:horizontal 横
 const _quality = 400;
 
 class Game {
   // 初期変数
-  public app: Application;
+  public app: Application = new Application({
+    width: _quality * _AspectRadio.horizontal,
+    height: _quality * _AspectRadio.vertical,
+    backgroundColor: 0xffffff,
+  });;
   public mouse: {
     x: number;
     y: number;
     isClick: boolean;
     onClick?: (callback: (event?: MouseEvent | TouchEvent) => void) => void;
   } = {
-      x: 0,
-      y: 0,
+      x: this.app.view.width / 2,
+      y: this.app.view.height / 2,
       isClick: false,
     };
 
@@ -53,13 +58,11 @@ class Game {
     };
 
   // スプライト
-  private Ball: _Note;
-  private button: _Button;
   private mouseEffect: _MouseEffect;
   private clickEffect: _ClickEffect[] = [];
 
   // シーン
-  private testscene: _Scene;
+  private titleScene: _TitleScene;
 
   constructor() {
     this.__init();
@@ -72,11 +75,6 @@ class Game {
   /* 初期化 */
   private __init() {
     // ステージを作る
-    this.app = new Application({
-      width: _quality * AspectRadio.horizontal,
-      height: _quality * AspectRadio.vertical,
-      backgroundColor: 0xffffff,
-    });
     document.body.appendChild(this.app.view as HTMLCanvasElement);
     this._mouse();
     this._resizer();
@@ -88,13 +86,13 @@ class Game {
 
   private _resizer() {
     if (
-      window.innerHeight / AspectRadio.vertical >
-      window.innerWidth / AspectRadio.horizontal
+      window.innerHeight / _AspectRadio.vertical >
+      window.innerWidth / _AspectRadio.horizontal
     ) {
-      (this.app.view as HTMLCanvasElement).style.scale = `${window.innerWidth / (_quality * AspectRadio.horizontal)
+      (this.app.view as HTMLCanvasElement).style.scale = `${window.innerWidth / (_quality * _AspectRadio.horizontal)
         }`;
     } else {
-      (this.app.view as HTMLCanvasElement).style.scale = `${window.innerHeight / (_quality * AspectRadio.vertical)
+      (this.app.view as HTMLCanvasElement).style.scale = `${window.innerHeight / (_quality * _AspectRadio.vertical)
         }`;
     }
   }
@@ -135,22 +133,26 @@ class Game {
   private _load() {
     /* Load Start */
 
-    this.testscene = new _Scene(this.app);
-    this.button = new _Button(this.testscene.container, tweURL("1f7e9"));
-    this.button
-      .setPosition(
-        (_quality * AspectRadio.horizontal) / 2,
-        (_quality * AspectRadio.vertical) / 2
-      )
-      .setOnClick(() => console.log("clicked!"))
-      .setOnMouseOver(() => console.log("hovered!"));
+    this._mouseEffect_init();
+    this._titleScene_init();
 
-    this.mouseEffect = new _MouseEffect(this.testscene.container);
+    /* Load End */
+  }
+
+  private _main(delta: number) {
+    //if (new URL(window.location.href).searchParams.get("debug") == "test")
+    this._mouseEffect_render(delta);
+    this._titleScene_render(delta);
+  }
+
+  /* マウスエフェクト */
+  private _mouseEffect_init() {
+    this.mouseEffect = new _MouseEffect(this.app);
     this.mouse.onClick((event: MouseEvent | TouchEvent) => {
       if (event instanceof MouseEvent) {
         this.clickEffect.push(
           new _ClickEffect(
-            this.testscene.container,
+            this.app,
             this.calc.x(event.clientX),
             this.calc.y(event.clientY)
           )
@@ -160,39 +162,37 @@ class Game {
         console.log(event);
         this.clickEffect.push(
           new _ClickEffect(
-            this.testscene.container,
+            this.app,
             this.calc.x(event.touches[0].pageX),
             this.calc.y(event.touches[0].pageY)
           )
         );
       }
     });
-
-    /* Load End */
   }
 
-  private _main(delta: number) {
-    if (new URL(window.location.href).searchParams.get("debug") == "test")
-      this._scene_testscene(delta);
+  private _mouseEffect_render(delta: number) {
+    this.mouseEffect.renderer(delta);
+    this.clickEffect.forEach((effect, index) => {
+      effect.renderer(delta);
+      if (effect.size > 1.414) {
+        this.clickEffect.splice(index, 1);
+        effect.EffectSprite.destroy();
+      }
+    });
   }
 
   // シーンごとの処理
 
-  private _scene_testscene(delta: number) {
-    this.testscene.renderer((delta: number) => {
-      this.button.renderer(delta);
-      this.mouseEffect.renderer(delta);
-      this.clickEffect.forEach((effect, index) => {
-        effect.renderer(delta);
-        if (effect.size > 1.414) {
-          this.clickEffect.splice(index, 1);
-          effect.EffectSprite.destroy();
-        }
-      });
-    }, delta);
+  private _titleScene_init() {
+    this.titleScene = new _TitleScene(this.app);
+  }
+
+  private _titleScene_render(delta: number) {
+    this.titleScene.render(delta);
   }
 }
 
 const _0x47616d65 = new Game();
 const _mouse = _0x47616d65.mouse;
-export { _quality, _mouse };
+export { _quality, _mouse, _AspectRadio, _0x47616d65 };
