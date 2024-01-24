@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf docs && webpack --mode=production --node-env=production",
+    "build:mobile": "rimraf mobile/www && webpack --mode=production --node-env=mobile",
     "build:dev": "rimraf docs && webpack --mode=development",
     "build:prod": "rimraf docs && webpack --mode=production --node-env=production",
     "watch": "webpack --watch",

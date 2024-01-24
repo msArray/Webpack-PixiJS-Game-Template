@@ -6,8 +6,6 @@ const webpackObfuscator = require('webpack-obfuscator');
 const workBoxWebpackPlugin = require("workbox-webpack-plugin");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 
-const isProduction = process.env.NODE_ENV == 'production';
-
 
 const stylesHandler = MiniCssExtractPlugin.loader;
 
@@ -18,8 +16,26 @@ const config = {
         index: './src/index.ts',
     },
     output: {
-        filename: isProduction ? '[name].[chunkhash].js' : '[name].js',
-        path: path.resolve(__dirname, isProduction ? 'docs' : 'dist'),
+        filename: (() => {
+            switch (process.env.NODE_ENV) {
+                case 'production':
+                    return '[name].[chunkhash].js';
+                case 'mobile':
+                    return '[name].[chunkhash].js';
+                default:
+                    return '[name].js';
+            }
+        })(),
+        path: path.resolve(__dirname, (() => {
+            switch (process.env.NODE_ENV) {
+                case 'production':
+                    return 'docs';
+                case 'mobile':
+                    return 'mobile/www';
+                default:
+                    return 'dist';
+            }
+        })()),
     },
     optimization: {
         splitChunks: {
@@ -40,50 +56,64 @@ const config = {
         open: true,
     },
     plugins:
-        isProduction ?
-            [
-                new HtmlWebpackPlugin({
-                    template: path.resolve(__dirname, 'src/html', 'web.html'),
-                }),
+        (() => {
+            switch (process.env.NODE_ENV) {
+                case 'production':
+                    return [
+                        new HtmlWebpackPlugin({
+                            template: path.resolve(__dirname, 'src/html', 'web.html'),
+                        }),
 
-                new MiniCssExtractPlugin(),
+                        new MiniCssExtractPlugin(),
 
-                new WebpackPwaManifest({
-                    short_name: "My Game",
-                    name: "My Game",
-                    display: "standalone",
-                    start_url: "index.html",
-                    background_color: "#000000",
-                    theme_color: "#FFFFFF",
-                    /*
-                    icons: [{
-                        src: path.resolve(__dirname, "src/images/icon_512.png"),
-                        sizes: [96, 128, 192, 256, 384, 512],
-                    }]*/
-                }),
+                        new WebpackPwaManifest({
+                            short_name: "My Game",
+                            name: "My Game",
+                            display: "standalone",
+                            start_url: "index.html",
+                            background_color: "#000000",
+                            theme_color: "#FFFFFF",
+                            /*
+                            icons: [{
+                                src: path.resolve(__dirname, "src/images/icon_512.png"),
+                                sizes: [96, 128, 192, 256, 384, 512],
+                            }]*/
+                        }),
 
-                new workBoxWebpackPlugin.GenerateSW({
-                    swDest: path.resolve(__dirname, "docs") + "/service-worker.js"
-                })
+                        new workBoxWebpackPlugin.GenerateSW({
+                            swDest: path.resolve(__dirname, "docs") + "/service-worker.js"
+                        })
 
-                // 難読化ツール　入れると小数点以下の計算がバグるので使わない方が良い
-                /*new webpackObfuscator({
-                    stringArrayCallsTransform: true,
-                    stringArrayEncoding: [
-                        'base64'
-                    ],
-                    stringArrayThreshold: 1,
-                }, [])*/
+                        // 難読化ツール　入れると小数点以下の計算がバグるので使わない方が良い
+                        /*new webpackObfuscator({
+                            stringArrayCallsTransform: true,
+                            stringArrayEncoding: [
+                                'base64'
+                            ],
+                            stringArrayThreshold: 1,
+                        }, [])*/
 
-                // Add your plugins here
-                // Learn more about plugins from https://webpack.js.org/configuration/plugins/
-            ] : [
-                new HtmlWebpackPlugin({
-                    template: path.resolve(__dirname, 'src/html', 'web.html'),
-                }),
+                        // Add your plugins here
+                        // Learn more about plugins from https://webpack.js.org/configuration/plugins/
+                    ];
+                case 'mobile':
+                    return [
+                        new HtmlWebpackPlugin({
+                            template: path.resolve(__dirname, 'src/html', 'web.html'),
+                        }),
 
-                new MiniCssExtractPlugin(),
-            ],
+                        new MiniCssExtractPlugin(),
+                    ];
+                default:
+                    return [
+                        new HtmlWebpackPlugin({
+                            template: path.resolve(__dirname, 'src/html', 'web.html'),
+                        }),
+
+                        new MiniCssExtractPlugin(),
+                    ];
+            }
+        })(),
     module: {
         rules: [
             {
@@ -110,12 +140,19 @@ const config = {
 };
 
 module.exports = () => {
-    if (isProduction) {
-        config.mode = 'production';
-
-
-    } else {
-        config.mode = 'development';
+    switch (process.env.NODE_ENV) {
+        case 'production':
+            config.mode = 'production';
+            config.devtool = 'source-map';
+            break;
+        case 'mobile':
+            config.mode = 'production';
+            config.devtool = 'source-map';
+            break;
+        default:
+            config.mode = 'development';
+            config.devtool = 'inline-source-map';
+            break;
     }
     return config;
 };
